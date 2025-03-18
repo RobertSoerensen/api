@@ -1,0 +1,5 @@
+# Ignore all enviorment files
+*.env
+
+# Ignore all Python cache files
+*.pyc

@@ -1,22 +1,23 @@
 from fastapi import FastAPI
+from dotenv import load_dotenv
+import os
 import requests
 from datetime import datetime
 
-app = FastAPI()
+# Load environment variables from .env file e
+load_dotenv()
 
-# Counter Global variables
-calendar_id = ""
-api_key = ""
+app = FastAPI()
 
 counterAPI = "/counter/v1"
 @app.get(counterAPI + "/events")
 async def getEvents():
-    url = f"https://www.googleapis.com/calendar/v3/calendars/{calendar_id}/events"
+    url = f"https://www.googleapis.com/calendar/v3/calendars/{os.getenv('COUNTER_CALENDAR_ID')}/events"
     params = {
         'timeMin': datetime.utcnow().isoformat() + 'Z',  # Ensure it's in UTC format
         'singleEvents': 'true',
         'orderBy': 'startTime',
-        'key': api_key
+        'key': os.getenv('COUNTER_API_KEY')
     }
     
     response = requests.get(url, params=params)

@@ -2,6 +2,8 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.get("/")
-async def root():
-    return {"message": "Success!"}
+
+counterAPI = "/counter/v1"
+@app.get(counterAPI + "/events")
+async def getEvents():
+    return {"message": "Events Success!"}

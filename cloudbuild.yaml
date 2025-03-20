@@ -1,5 +1,35 @@
 steps:
-- env:
-  - 'COUNTER_CALENDAR_ID=$_COUNTER_CALENDAR_ID'
-  - 'COUNTER_API_KEY=$_COUNTER_API_KEY'
+# Step to build the Docker image using your specific command
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--no-cache'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/api-2025-454108/cloud-run-source-deploy/api/api:5b1755bc7d1a363de55174669cae7ef4e0473da2'
+      - '-f'
+      - 'Dockerfile'
+      - '.'
+# Step to push the Docker image to Google Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/api-2025-454108/cloud-run-source-deploy/api/api:5b1755bc7d1a363de55174669cae7ef4e0473da2'
+# Step to update the Cloud Run service
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args:
+      - 'run'
+      - 'services'
+      - 'update'
+      - 'api'  # Replace with your Cloud Run service name
+      - '--platform'
+      - 'managed'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/api-2025-454108/cloud-run-source-deploy/api/api:5b1755bc7d1a363de55174669cae7ef4e0473da2'
+      - '--labels'
+      - 'managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=5b1755bc7d1a363de55174669cae7ef4e0473da2,gcb-build-id=$BUILD_ID,gcb-trigger-id=$TRIGGER_ID'
+      - '--region'
+      - 'us-central1'
+      - '--quiet'
+      - '--set-env-vars'
+      - 'COUNTER_CALENDAR_ID=$_COUNTER_CALENDAR_ID,COUNTER_API_KEY=$_COUNTER_API_KEY'  # Injecting environment variables
 

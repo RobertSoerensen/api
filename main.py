@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 import requests
@@ -8,6 +9,20 @@ from datetime import datetime
 load_dotenv()
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:4200",  # REMOVE
+    "https://robertsoerensen.dk",
+    "https://counter.robertsoerensen.dk",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # List of allowed origins
+    allow_credentials=False,
+    allow_methods=["GET"],  # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 
 counterAPI = "/counter/v1"
 @app.get(counterAPI + "/events")
